@@ -1,1 +1,425 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Guidera — AI City Guide & Audio Walking Tours</title>
+<meta name="description" content="Tap any place on the map and let AI tell you its story. Hands-free audio walking tours for any city in the world. Available on iPhone and Apple Watch.">
+<meta name="theme-color" content="#4F46E5">
 
+<!-- Open Graph -->
+<meta property="og:title" content="Guidera — AI City Guide">
+<meta property="og:description" content="Your AI-powered tour guide for any place in the world. Tap, listen, explore.">
+<meta property="og:type" content="website">
+<meta property="og:url" content="https://msc35.github.io/guidera-legal/">
+
+<style>
+  :root {
+    --indigo: #4F46E5;
+    --purple: #9333EA;
+    --amber: #D97706;
+    --orange: #EA580C;
+    --emerald: #059669;
+    --teal: #0D9488;
+    --ink: #0F172A;
+    --ink-soft: #334155;
+    --muted: #64748B;
+    --surface: #FFFFFF;
+    --surface-soft: #F8FAFC;
+    --border: rgba(15, 23, 42, 0.08);
+    --radius: 16px;
+    --radius-sm: 12px;
+    --shadow-sm: 0 1px 2px rgba(15, 23, 42, 0.04), 0 1px 3px rgba(15, 23, 42, 0.06);
+    --shadow-md: 0 4px 12px rgba(15, 23, 42, 0.06), 0 2px 4px rgba(15, 23, 42, 0.04);
+    --shadow-lg: 0 20px 40px -12px rgba(79, 70, 229, 0.25);
+  }
+
+  * { box-sizing: border-box; }
+
+  html { scroll-behavior: smooth; }
+
+  body {
+    margin: 0;
+    font-family: -apple-system, BlinkMacSystemFont, "SF Pro Text", "SF Pro Display", "Helvetica Neue", sans-serif;
+    color: var(--ink);
+    background: var(--surface);
+    line-height: 1.55;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+  }
+
+  /* ---------- Hero ---------- */
+  .hero {
+    position: relative;
+    overflow: hidden;
+    padding: 80px 24px 100px;
+    text-align: center;
+    color: #fff;
+    background:
+      radial-gradient(1200px 600px at 20% -10%, rgba(255,255,255,0.15), transparent 60%),
+      radial-gradient(900px 500px at 85% 10%, rgba(255,255,255,0.12), transparent 55%),
+      linear-gradient(135deg, #4F46E5 0%, #7C3AED 45%, #9333EA 100%);
+    background-size: 200% 200%;
+    animation: shimmer 14s ease-in-out infinite;
+  }
+
+  @keyframes shimmer {
+    0%   { background-position: 0% 0%, 100% 0%, 0% 50%; }
+    50%  { background-position: 100% 50%, 0% 50%, 100% 50%; }
+    100% { background-position: 0% 0%, 100% 0%, 0% 50%; }
+  }
+
+  .hero::before {
+    content: "";
+    position: absolute;
+    inset: 0;
+    background-image:
+      radial-gradient(circle at 15% 85%, rgba(255,255,255,0.08) 0%, transparent 25%),
+      radial-gradient(circle at 85% 20%, rgba(255,255,255,0.06) 0%, transparent 30%);
+    pointer-events: none;
+  }
+
+  .hero-inner {
+    position: relative;
+    max-width: 860px;
+    margin: 0 auto;
+  }
+
+  .eyebrow {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    padding: 6px 14px;
+    margin-bottom: 24px;
+    font-size: 13px;
+    font-weight: 600;
+    letter-spacing: 0.02em;
+    border-radius: 999px;
+    background: rgba(255,255,255,0.14);
+    backdrop-filter: blur(10px);
+    -webkit-backdrop-filter: blur(10px);
+    border: 1px solid rgba(255,255,255,0.18);
+  }
+
+  .eyebrow-dot {
+    width: 6px; height: 6px; border-radius: 50%;
+    background: #A7F3D0;
+    box-shadow: 0 0 0 4px rgba(167,243,208,0.25);
+  }
+
+  h1 {
+    font-size: clamp(34px, 6vw, 56px);
+    font-weight: 700;
+    line-height: 1.1;
+    letter-spacing: -0.02em;
+    margin: 0 0 20px;
+  }
+
+  .subhead {
+    font-size: clamp(17px, 2vw, 20px);
+    color: rgba(255,255,255,0.92);
+    max-width: 600px;
+    margin: 0 auto 36px;
+    font-weight: 400;
+  }
+
+  .app-store-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 12px;
+    padding: 14px 24px;
+    background: #000;
+    color: #fff;
+    text-decoration: none;
+    border-radius: var(--radius-sm);
+    font-weight: 500;
+    transition: transform 220ms ease, box-shadow 220ms ease;
+    box-shadow: 0 10px 30px rgba(0,0,0,0.25);
+  }
+  .app-store-btn:hover { transform: translateY(-2px); box-shadow: 0 14px 36px rgba(0,0,0,0.32); }
+  .app-store-btn:active { transform: translateY(0); }
+
+  .app-store-btn svg { width: 28px; height: 28px; }
+  .app-store-btn .label-sm { font-size: 11px; opacity: 0.85; display: block; line-height: 1; }
+  .app-store-btn .label-lg { font-size: 19px; font-weight: 600; display: block; line-height: 1.1; margin-top: 3px; }
+
+  /* ---------- Features ---------- */
+  .section {
+    padding: 88px 24px;
+    max-width: 1120px;
+    margin: 0 auto;
+  }
+
+  .section-title {
+    text-align: center;
+    margin: 0 0 12px;
+    font-size: clamp(26px, 3.5vw, 36px);
+    font-weight: 700;
+    letter-spacing: -0.015em;
+    color: var(--ink);
+  }
+
+  .section-sub {
+    text-align: center;
+    color: var(--muted);
+    font-size: 17px;
+    margin: 0 auto 56px;
+    max-width: 580px;
+  }
+
+  .features {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+    gap: 20px;
+  }
+
+  .feature {
+    padding: 32px 28px;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    transition: transform 260ms ease, box-shadow 260ms ease, border-color 260ms ease;
+    /* fade-in setup */
+    opacity: 0;
+    transform: translateY(20px);
+  }
+
+  .feature.in {
+    opacity: 1;
+    transform: translateY(0);
+    transition: opacity 600ms ease, transform 600ms ease, box-shadow 260ms ease;
+  }
+
+  .feature:hover {
+    box-shadow: var(--shadow-md);
+    border-color: rgba(79, 70, 229, 0.2);
+    transform: translateY(-2px);
+  }
+
+  .icon-wrap {
+    width: 48px; height: 48px;
+    border-radius: var(--radius-sm);
+    display: flex; align-items: center; justify-content: center;
+    margin-bottom: 20px;
+    color: #fff;
+  }
+  .icon-indigo { background: linear-gradient(135deg, var(--indigo), var(--purple)); }
+  .icon-amber  { background: linear-gradient(135deg, var(--amber), var(--orange)); }
+  .icon-emerald{ background: linear-gradient(135deg, var(--emerald), var(--teal)); }
+  .icon-wrap svg { width: 24px; height: 24px; }
+
+  .feature h3 {
+    font-size: 19px;
+    font-weight: 600;
+    margin: 0 0 8px;
+    letter-spacing: -0.01em;
+  }
+
+  .feature p {
+    color: var(--ink-soft);
+    font-size: 15px;
+    margin: 0;
+    line-height: 1.55;
+  }
+
+  /* ---------- CTA strip ---------- */
+  .cta-strip {
+    background: var(--surface-soft);
+    padding: 64px 24px;
+    text-align: center;
+    border-top: 1px solid var(--border);
+  }
+  .cta-strip h2 {
+    font-size: clamp(24px, 3vw, 32px);
+    margin: 0 0 12px;
+    letter-spacing: -0.015em;
+  }
+  .cta-strip p {
+    color: var(--muted);
+    margin: 0 0 28px;
+    font-size: 16px;
+  }
+
+  /* ---------- Footer ---------- */
+  footer {
+    padding: 48px 24px 36px;
+    text-align: center;
+    color: var(--muted);
+    font-size: 14px;
+    border-top: 1px solid var(--border);
+  }
+  footer a {
+    color: var(--ink-soft);
+    text-decoration: none;
+    margin: 0 10px;
+    transition: color 180ms ease;
+  }
+  footer a:hover { color: var(--indigo); }
+  footer .links { margin-bottom: 16px; }
+  footer .copy { font-size: 13px; color: var(--muted); }
+  footer .contact { margin-top: 10px; font-size: 13px; }
+
+  @media (prefers-reduced-motion: reduce) {
+    .hero { animation: none; }
+    .feature { opacity: 1; transform: none; transition: none; }
+  }
+</style>
+</head>
+<body>
+
+<!-- HERO -->
+<header class="hero">
+  <div class="hero-inner">
+    <div class="eyebrow">
+      <span class="eyebrow-dot"></span>
+      Now on the App Store
+    </div>
+    <h1>Every place has a story.<br>Let AI tell it to you.</h1>
+    <p class="subhead">
+      Tap any place on the map and hear its history, architecture, and local secrets — narrated hands-free as you walk. A private tour guide in your pocket, for any city in the world.
+    </p>
+    <a class="app-store-btn" href="https://apps.apple.com/us/app/guidera-ai-city-guide/id6762008171" target="_blank" rel="noopener">
+      <svg viewBox="0 0 384 512" fill="currentColor" aria-hidden="true">
+        <path d="M318.7 268.7c-.2-36.7 16.4-64.4 50-84.8-18.8-26.9-47.2-41.7-84.7-44.6-35.5-2.8-74.3 20.7-88.5 20.7-15 0-49.4-19.7-76.4-19.7C63.3 141.2 4 184.8 4 273.5q0 39.3 14.4 81.2c12.8 36.7 59 126.7 107.2 125.2 25.2-.6 43-17.9 75.8-17.9 31.8 0 48.3 17.9 76.4 17.9 48.6-.7 90.4-82.5 102.6-119.3-65.2-30.7-61.7-90-61.7-91.9zm-56.6-164.2c27.3-32.4 24.8-61.9 24-72.5-24.1 1.4-52 16.4-67.9 34.9-17.5 19.8-27.8 44.3-25.6 71.9 26.1 2 49.9-11.4 69.5-34.3z"/>
+      </svg>
+      <span>
+        <span class="label-sm">Download on the</span>
+        <span class="label-lg">App Store</span>
+      </span>
+    </a>
+  </div>
+</header>
+
+<!-- FEATURES -->
+<section class="section">
+  <h2 class="section-title">What Guidera does</h2>
+  <p class="section-sub">Walk anywhere. Learn everything. No planning required.</p>
+
+  <div class="features">
+
+    <div class="feature">
+      <div class="icon-wrap icon-indigo">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+          <path d="M20.5 9.5 19 21H5L3.5 9.5"/>
+          <path d="M2 9.5h20"/>
+          <path d="M12 3a4 4 0 0 1 4 4v2.5H8V7a4 4 0 0 1 4-4z"/>
+        </svg>
+      </div>
+      <h3>Tap any place</h3>
+      <p>Tap a building, park, or street. In seconds, AI writes a rich, personalized description — history, architecture, hidden details.</p>
+    </div>
+
+    <div class="feature">
+      <div class="icon-wrap icon-amber">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+          <path d="M12 1v23"/>
+          <path d="M17 5a3 3 0 0 0-5-1 3 3 0 0 0-5 1"/>
+          <rect x="3" y="9" width="18" height="12" rx="2"/>
+          <path d="M9 15a3 3 0 1 0 6 0 3 3 0 1 0-6 0"/>
+        </svg>
+      </div>
+      <h3>Walkman mode</h3>
+      <p>Pocket your phone, put earbuds in, and just walk. Guidera narrates each stop automatically as you approach it — no screen, no buttons.</p>
+    </div>
+
+    <div class="feature">
+      <div class="icon-wrap icon-emerald">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+          <path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/>
+          <circle cx="12" cy="10" r="3"/>
+        </svg>
+      </div>
+      <h3>Guided walking tours</h3>
+      <p>Follow curated routes through the best of any city, or create your own AI-built custom tour. See the route, track progress, hear each stop.</p>
+    </div>
+
+    <div class="feature">
+      <div class="icon-wrap icon-indigo">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+          <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/>
+        </svg>
+      </div>
+      <h3>Ask follow-ups</h3>
+      <p>Curious about opening hours, the architect, or what happened here in 1842? Just ask. Every place becomes a conversation.</p>
+    </div>
+
+    <div class="feature">
+      <div class="icon-wrap icon-amber">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+          <rect x="5" y="2" width="14" height="20" rx="3"/>
+          <circle cx="12" cy="18" r="1"/>
+          <path d="M9 6h6"/>
+        </svg>
+      </div>
+      <h3>Live Activity &amp; Watch</h3>
+      <p>Track your tour from the Lock Screen, Dynamic Island, or Apple Watch. Current stop, distance, playback controls — all without opening the app.</p>
+    </div>
+
+    <div class="feature">
+      <div class="icon-wrap icon-emerald">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+          <circle cx="12" cy="12" r="9"/>
+          <path d="M12 3a15 15 0 0 1 0 18"/>
+          <path d="M12 3a15 15 0 0 0 0 18"/>
+          <path d="M3 12h18"/>
+        </svg>
+      </div>
+      <h3>Any city, any language</h3>
+      <p>Works everywhere in the world. Choose your guide persona, preferred language, and how detailed you want descriptions to be.</p>
+    </div>
+
+  </div>
+</section>
+
+<!-- CTA -->
+<section class="cta-strip">
+  <h2>Start exploring today</h2>
+  <p>Free to download. Every place has a story.</p>
+  <a class="app-store-btn" href="https://apps.apple.com/us/app/guidera-ai-city-guide/id6762008171" target="_blank" rel="noopener">
+    <svg viewBox="0 0 384 512" fill="currentColor" aria-hidden="true">
+      <path d="M318.7 268.7c-.2-36.7 16.4-64.4 50-84.8-18.8-26.9-47.2-41.7-84.7-44.6-35.5-2.8-74.3 20.7-88.5 20.7-15 0-49.4-19.7-76.4-19.7C63.3 141.2 4 184.8 4 273.5q0 39.3 14.4 81.2c12.8 36.7 59 126.7 107.2 125.2 25.2-.6 43-17.9 75.8-17.9 31.8 0 48.3 17.9 76.4 17.9 48.6-.7 90.4-82.5 102.6-119.3-65.2-30.7-61.7-90-61.7-91.9zm-56.6-164.2c27.3-32.4 24.8-61.9 24-72.5-24.1 1.4-52 16.4-67.9 34.9-17.5 19.8-27.8 44.3-25.6 71.9 26.1 2 49.9-11.4 69.5-34.3z"/>
+    </svg>
+    <span>
+      <span class="label-sm">Download on the</span>
+      <span class="label-lg">App Store</span>
+    </span>
+  </a>
+</section>
+
+<!-- FOOTER -->
+<footer>
+  <div class="links">
+    <a href="https://msc35.github.io/guidera-legal/privacy">Privacy Policy</a>
+    ·
+    <a href="https://msc35.github.io/guidera-legal/terms">Terms of Service</a>
+    ·
+    <a href="https://msc35.github.io/guidera-legal/support">Support</a>
+  </div>
+  <div class="contact">
+    Contact: <a href="mailto:mehmetselim692@icloud.com">mehmetselim692@icloud.com</a>
+  </div>
+  <div class="copy" style="margin-top: 14px;">
+    © 2026 Mehmet Selim Çetin · Guidera is not affiliated with Google, OpenAI, or Apple Inc.
+  </div>
+</footer>
+
+<script>
+  // Subtle fade-in on scroll for feature cards, with staggered delay.
+  const observer = new IntersectionObserver((entries) => {
+    entries.forEach((entry, i) => {
+      if (entry.isIntersecting) {
+        entry.target.style.transitionDelay = (entry.target.dataset.delay || '0ms');
+        entry.target.classList.add('in');
+        observer.unobserve(entry.target);
+      }
+    });
+  }, { threshold: 0.15, rootMargin: '0px 0px -40px 0px' });
+
+  document.querySelectorAll('.feature').forEach((el, i) => {
+    el.dataset.delay = (i * 80) + 'ms';
+    observer.observe(el);
+  });
+</script>
+
+</body>
+</html>
