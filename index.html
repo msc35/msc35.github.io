@@ -1,488 +1,324 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Guidera — AI City Guide & Audio Walking Tours</title>
-<meta name="description" content="Tap any place on the map and let AI tell you its story. Hands-free audio walking tours for any city in the world.">
-<meta name="theme-color" content="#0F4C3A">
-<link rel="icon" type="image/png" href="No-bg_50percent.png">  
-
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Geist:wght@300;400;500;600&family=Instrument+Serif:ital@0;1&display=swap" rel="stylesheet">
-
-<style>
-  :root {
-    /* New Guidera Color Tokens */
-    --forest: #0F4C3A;
-    --terra: #C8553D;
-    --cream: #FAF7F2;
-    --sand: #EAE3D4;
-    --ink: #1A1814;
-    --ink-soft: rgba(26, 24, 20, 0.7);
-    
-    --radius-lg: 24px;
-    --radius-md: 16px;
-    
-    --shadow-soft: 0 12px 32px rgba(26, 24, 20, 0.08), 0 2px 8px rgba(26, 24, 20, 0.04);
-    --shadow-hover: 0 20px 48px rgba(26, 24, 20, 0.12), 0 8px 16px rgba(26, 24, 20, 0.06);
-    
-    --font-display: 'Instrument Serif', serif;
-    --font-ui: 'Geist', -apple-system, BlinkMacSystemFont, sans-serif;
-  }
-
-  * { box-sizing: border-box; }
-  html { scroll-behavior: smooth; }
-
-  body {
-    margin: 0;
-    font-family: var(--font-ui);
-    color: var(--ink);
-    background: var(--cream);
-    line-height: 1.55;
-    -webkit-font-smoothing: antialiased;
-    -moz-osx-font-smoothing: grayscale;
-    overflow-x: hidden;
-  }
-
-  /* ---------- Typography ---------- */
-  h1, h2, h3 {
-    font-family: var(--font-display);
-    font-weight: 400;
-    margin: 0;
-  }
-
-  /* ---------- Hero Section ---------- */
-  .hero {
-    position: relative;
-    background: var(--forest);
-    color: var(--cream);
-    padding: 100px 24px 120px;
-    overflow: hidden;
-  }
-
-  /* Subtle noise/texture overlay for premium feel */
-  .hero::before {
-    content: "";
-    position: absolute;
-    inset: 0;
-    background-image: radial-gradient(circle at 80% 20%, rgba(200, 85, 61, 0.15) 0%, transparent 40%),
-                      radial-gradient(circle at 20% 80%, rgba(250, 247, 242, 0.05) 0%, transparent 40%);
-    pointer-events: none;
-  }
-
-  .hero-container {
-    max-width: 1200px;
-    margin: 0 auto;
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    gap: 60px;
-    position: relative;
-    z-index: 2;
-  }
-
-  .hero-content {
-    flex: 1;
-    max-width: 600px;
-    opacity: 0;
-    transform: translateY(30px);
-    animation: fadeUp 1s cubic-bezier(0.16, 1, 0.3, 1) forwards;
-  }
-
-  .eyebrow {
-    display: inline-flex;
-    align-items: center;
-    gap: 8px;
-    padding: 6px 14px;
-    margin-bottom: 24px;
-    font-size: 12px;
-    font-weight: 600;
-    letter-spacing: 0.1em;
-    text-transform: uppercase;
-    border-radius: 999px;
-    background: rgba(250, 247, 242, 0.1);
-    border: 1px solid rgba(250, 247, 242, 0.2);
-    color: var(--cream);
-  }
-
-  .eyebrow-dot {
-    width: 6px; height: 6px; border-radius: 50%;
-    background: var(--terra);
-  }
-
-  .hero h1 {
-    font-size: clamp(48px, 6vw, 76px);
-    line-height: 0.95;
-    letter-spacing: -0.02em;
-    margin-bottom: 24px;
-  }
-
-  .hero h1 i {
-    color: var(--sand);
-  }
-
-  .hero p {
-    font-size: clamp(17px, 2vw, 20px);
-    color: rgba(250, 247, 242, 0.85);
-    margin: 0 0 40px;
-    font-weight: 400;
-    text-wrap: balance;
-  }
-
-  .hero-visual {
-    flex: 1;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    opacity: 0;
-    transform: translateY(30px) scale(0.95);
-    animation: fadeUp 1s cubic-bezier(0.16, 1, 0.3, 1) 0.2s forwards;
-  }
-
-  .hero-icon {
-    width: 100%;
-    max-width: 440px;
-    border-radius: 40px;
-    box-shadow: 0 30px 60px rgba(0,0,0,0.4);
-    animation: float 6s ease-in-out infinite;
-  }
-
-  .app-store-btn {
-    display: inline-flex;
-    align-items: center;
-    gap: 12px;
-    padding: 14px 28px;
-    background: var(--terra);
-    color: var(--cream);
-    text-decoration: none;
-    border-radius: 14px;
-    transition: transform 0.25s cubic-bezier(0.16, 1, 0.3, 1), box-shadow 0.25s ease;
-    box-shadow: 0 10px 24px rgba(200, 85, 61, 0.3);
-  }
-
-  .app-store-btn:hover { 
-    transform: translateY(-4px); 
-    box-shadow: 0 16px 32px rgba(200, 85, 61, 0.4); 
-  }
-
-  .app-store-btn svg { width: 28px; height: 28px; }
-  .app-store-btn .label-sm { font-size: 11px; font-weight: 500; display: block; line-height: 1; opacity: 0.9; }
-  .app-store-btn .label-lg { font-size: 19px; font-weight: 600; display: block; line-height: 1.1; margin-top: 3px; }
-
-  /* ---------- Features Section ---------- */
-  .section {
-    padding: 120px 24px;
-    max-width: 1200px;
-    margin: 0 auto;
-  }
-
-  .section-header {
-    text-align: center;
-    margin-bottom: 72px;
-  }
-
-  .section-header h2 {
-    font-size: clamp(36px, 4vw, 52px);
-    color: var(--ink);
-    margin-bottom: 16px;
-  }
-
-  .section-header p {
-    color: var(--ink-soft);
-    font-size: 18px;
-    max-width: 580px;
-    margin: 0 auto;
-  }
-
-  .features-grid {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
-    gap: 32px;
-  }
-
-  .feature-card {
-    background: #FFFFFF;
-    padding: 40px 32px;
-    border-radius: var(--radius-lg);
-    box-shadow: var(--shadow-soft);
-    transition: transform 0.4s cubic-bezier(0.16, 1, 0.3, 1), box-shadow 0.4s ease;
-    opacity: 0;
-    transform: translateY(30px);
-  }
-
-  .feature-card.in {
-    opacity: 1;
-    transform: translateY(0);
-  }
-
-  .feature-card:hover {
-    transform: translateY(-6px);
-    box-shadow: var(--shadow-hover);
-  }
-
-  .icon-wrap {
-    width: 56px; height: 56px;
-    border-radius: var(--radius-md);
-    display: flex; align-items: center; justify-content: center;
-    margin-bottom: 24px;
-    background: var(--sand);
-    color: var(--forest);
-    transition: background 0.3s ease, color 0.3s ease;
-  }
-
-  .feature-card:hover .icon-wrap {
-    background: var(--forest);
-    color: var(--cream);
-  }
-
-  .icon-wrap.accent { color: var(--terra); }
-  .feature-card:hover .icon-wrap.accent { background: var(--terra); color: var(--cream); }
-
-  .icon-wrap svg { width: 28px; height: 28px; }
-
-  .feature-card h3 {
-    font-size: 28px;
-    margin: 0 0 12px;
-    color: var(--ink);
-  }
-
-  .feature-card p {
-    color: var(--ink-soft);
-    font-size: 16px;
-    margin: 0;
-  }
-
-  /* ---------- CTA Strip ---------- */
-  .cta-strip {
-    background: var(--sand);
-    padding: 100px 24px;
-    text-align: center;
-  }
-
-  .cta-strip h2 {
-    font-size: clamp(32px, 4vw, 48px);
-    margin: 0 0 16px;
-    color: var(--ink);
-  }
-
-  .cta-strip p {
-    color: var(--ink-soft);
-    font-size: 18px;
-    margin: 0 auto 40px;
-    max-width: 500px;
-  }
-
-  /* ---------- Footer ---------- */
-  footer {
-    background: var(--ink);
-    color: var(--cream);
-    padding: 64px 24px 40px;
-    text-align: center;
-  }
-
-  footer a {
-    color: var(--cream);
-    text-decoration: none;
-    opacity: 0.7;
-    margin: 0 12px;
-    font-size: 14px;
-    transition: opacity 0.2s ease;
-  }
-
-  footer a:hover { opacity: 1; }
-  
-  .footer-links { margin-bottom: 24px; }
-  
-  .footer-copy { 
-    font-size: 13px; 
-    opacity: 0.5; 
-    margin-top: 32px;
-    padding-top: 32px;
-    border-top: 1px solid rgba(250, 247, 242, 0.1);
-  }
-
-  /* ---------- Animations ---------- */
-  @keyframes fadeUp {
-    from { opacity: 0; transform: translateY(30px); }
-    to { opacity: 1; transform: translateY(0); }
-  }
-
-  @keyframes float {
-    0%, 100% { transform: translateY(0px); }
-    50% { transform: translateY(-15px); }
-  }
-
-  /* ---------- Responsive ---------- */
-  @media (max-width: 900px) {
-    .hero-container {
-      flex-direction: column;
-      text-align: center;
-      gap: 40px;
-    }
-    .hero h1 { margin-left: auto; margin-right: auto; }
-    .hero p { margin-left: auto; margin-right: auto; }
-    .hero-visual { width: 100%; max-width: 320px; margin: 0 auto; }
-  }
-
-  @media (prefers-reduced-motion: reduce) {
-    .hero-content, .hero-visual, .feature-card { animation: none; transition: none; opacity: 1; transform: none; }
-    .hero-icon { animation: none; }
-  }
-</style>
+<meta charset="utf-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1"/>
+<meta name="theme-color" content="#0F4C3A"/>
+<title>Guidera — AI City Guide &amp; Audio Walking Tours</title>
+<meta name="description" content="Tap any place on the map and let AI tell its story. Hands-free audio walking tours for any city in the world."/>
+<meta name="author" content="Guidera"/>
+<meta property="og:type" content="website"/>
+<meta property="og:site_name" content="Guidera"/>
+<meta property="og:title" content="Guidera — AI City Guide &amp; Audio Walking Tours"/>
+<meta property="og:description" content="Tap any place on the map and let AI tell its story. Hands-free audio walking tours for any city in the world."/>
+<meta property="og:image" content="./assets/compass-pin.svg"/>
+<meta name="twitter:card" content="summary_large_image"/>
+<meta name="twitter:title" content="Guidera — AI City Guide &amp; Audio Walking Tours"/>
+<meta name="twitter:description" content="Tap any place on the map and let AI tell its story. Hands-free audio walking tours for any city in the world."/>
+<meta name="twitter:image" content="./assets/compass-pin.svg"/>
+<link rel="icon" href="./assets/compass-pin.svg" type="image/svg+xml"/>
+<link rel="preconnect" href="https://fonts.googleapis.com"/>
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Geist:wght@300;400;500;600;700&family=Instrument+Serif:ital@0;1&display=swap"/>
+<link rel="stylesheet" href="./styles.css"/>
+<script type="application/ld+json">{"@context": "https://schema.org", "@type": "MobileApplication", "name": "Guidera", "operatingSystem": "iOS", "applicationCategory": "TravelApplication", "downloadUrl": "https://apps.apple.com/us/app/guidera-ai-city-guide/id6762008171", "offers": {"@type": "Offer", "price": "0", "priceCurrency": "USD"}}</script>
 </head>
 <body>
-
-<header class="hero">
-  <div class="hero-container">
-    <div class="hero-content">
-      <div class="eyebrow">
-        <span class="eyebrow-dot"></span>
-        Now on the App Store
-      </div>
-      <h1>Every place has a story.<br><i>Let AI tell it.</i></h1>
-      <p>
-        Tap any place on the map and hear its history, architecture, and local secrets. A warmer, calmer travel companion in your pocket.
-      </p>
-      <a class="app-store-btn" href="https://apps.apple.com/us/app/guidera-ai-city-guide/id6762008171" target="_blank" rel="noopener">
-        <svg viewBox="0 0 384 512" fill="currentColor" aria-hidden="true">
-          <path d="M318.7 268.7c-.2-36.7 16.4-64.4 50-84.8-18.8-26.9-47.2-41.7-84.7-44.6-35.5-2.8-74.3 20.7-88.5 20.7-15 0-49.4-19.7-76.4-19.7C63.3 141.2 4 184.8 4 273.5q0 39.3 14.4 81.2c12.8 36.7 59 126.7 107.2 125.2 25.2-.6 43-17.9 75.8-17.9 31.8 0 48.3 17.9 76.4 17.9 48.6-.7 90.4-82.5 102.6-119.3-65.2-30.7-61.7-90-61.7-91.9zm-56.6-164.2c27.3-32.4 24.8-61.9 24-72.5-24.1 1.4-52 16.4-67.9 34.9-17.5 19.8-27.8 44.3-25.6 71.9 26.1 2 49.9-11.4 69.5-34.3z"/>
-        </svg>
-        <span>
-          <span class="label-sm">Download on the</span>
-          <span class="label-lg">App Store</span>
-        </span>
-      </a>
+<header class="header">
+  <div class="header-inner">
+    <a href="./index.html" class="logo">
+      <span class="logo-mark">G</span>
+      <span class="logo-text">Guidera</span>
+    </a>
+    <nav class="nav">
+      <a href="./index.html" data-nav>Home</a>
+<a href="./features.html" data-nav>Features</a>
+<a href="./how-it-works.html" data-nav>How it works</a>
+<a href="./cities.html" data-nav>Cities</a>
+<a href="./faq.html" data-nav>FAQ</a>
+<a href="./about.html" data-nav>About</a>
+    </nav>
+    <div class="nav-cta">
+      <a href="https://apps.apple.com/us/app/guidera-ai-city-guide/id6762008171" target="_blank" rel="noopener noreferrer" class="btn-app btn-ink ">
+  <svg viewBox="0 0 384 512" width="28" height="28" aria-hidden="true"><path d="M318.7 268.7c-.2-36.7 16.4-64.4 50-84.8-18.8-26.9-47.2-41.7-84.7-44.6-35.5-2.8-74.3 20.7-88.5 20.7-15 0-49.4-19.7-76.4-19.7C63.3 141.2 4 184.8 4 273.5q0 39.3 14.4 81.2c12.8 36.7 59 126.7 107.2 125.2 25.2-.6 43-17.9 75.8-17.9 31.8 0 48.3 17.9 76.4 17.9 48.6-.7 90.4-82.5 102.6-119.3-65.2-30.7-61.7-90-61.7-91.9zm-56.6-164.2c27.3-32.4 24.8-61.9 24-72.5-24.1 1.4-52 16.4-67.9 34.9-17.5 19.8-27.8 44.3-25.6 71.9 26.1 2 49.9-11.4 69.5-34.3z" fill="currentColor"/></svg>
+  <span class="btn-stack"><span class="btn-small">Download on the</span><span class="btn-big">App Store</span></span>
+</a>
     </div>
-    
-    <div class="hero-visual">
-      <img src="New_icon_50percent.png" alt="Guidera 3D Compass Pin" class="hero-icon">
-    </div>
+    <button type="button" class="menu-btn" aria-label="Toggle menu" aria-expanded="false">
+      <span class="icon-menu"><svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" class=""><line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="18" x2="21" y2="18"/></svg></span>
+      <span class="icon-close" style="display:none"><svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" class=""><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg></span>
+    </button>
+  </div>
+  <div class="mobile-menu">
+    <nav>
+      <a href="./index.html" data-nav>Home</a>
+<a href="./features.html" data-nav>Features</a>
+<a href="./how-it-works.html" data-nav>How it works</a>
+<a href="./cities.html" data-nav>Cities</a>
+<a href="./faq.html" data-nav>FAQ</a>
+<a href="./about.html" data-nav>About</a>
+      <div class="cta-wrap"><a href="https://apps.apple.com/us/app/guidera-ai-city-guide/id6762008171" target="_blank" rel="noopener noreferrer" class="btn-app btn-ink w-full">
+  <svg viewBox="0 0 384 512" width="28" height="28" aria-hidden="true"><path d="M318.7 268.7c-.2-36.7 16.4-64.4 50-84.8-18.8-26.9-47.2-41.7-84.7-44.6-35.5-2.8-74.3 20.7-88.5 20.7-15 0-49.4-19.7-76.4-19.7C63.3 141.2 4 184.8 4 273.5q0 39.3 14.4 81.2c12.8 36.7 59 126.7 107.2 125.2 25.2-.6 43-17.9 75.8-17.9 31.8 0 48.3 17.9 76.4 17.9 48.6-.7 90.4-82.5 102.6-119.3-65.2-30.7-61.7-90-61.7-91.9zm-56.6-164.2c27.3-32.4 24.8-61.9 24-72.5-24.1 1.4-52 16.4-67.9 34.9-17.5 19.8-27.8 44.3-25.6 71.9 26.1 2 49.9-11.4 69.5-34.3z" fill="currentColor"/></svg>
+  <span class="btn-stack"><span class="btn-small">Download on the</span><span class="btn-big">App Store</span></span>
+</a></div>
+    </nav>
   </div>
 </header>
+<main>
+<!-- Hero -->
+<section class="hero">
+  <div class="hero-inner">
+    <div class="hero-text fade-up">
+      <span class="eyebrow-badge"><span class="dot"></span>Now on the App Store</span>
+      <h1>Every place has a story.<br/><i>Let AI tell it.</i></h1>
+      <p>Tap any place on the map and hear its history, architecture, and local secrets. A warmer, calmer travel companion in your pocket.</p>
+      <div class="hero-ctas">
+        <a href="https://apps.apple.com/us/app/guidera-ai-city-guide/id6762008171" target="_blank" rel="noopener noreferrer" class="btn-app btn-terra ">
+  <svg viewBox="0 0 384 512" width="28" height="28" aria-hidden="true"><path d="M318.7 268.7c-.2-36.7 16.4-64.4 50-84.8-18.8-26.9-47.2-41.7-84.7-44.6-35.5-2.8-74.3 20.7-88.5 20.7-15 0-49.4-19.7-76.4-19.7C63.3 141.2 4 184.8 4 273.5q0 39.3 14.4 81.2c12.8 36.7 59 126.7 107.2 125.2 25.2-.6 43-17.9 75.8-17.9 31.8 0 48.3 17.9 76.4 17.9 48.6-.7 90.4-82.5 102.6-119.3-65.2-30.7-61.7-90-61.7-91.9zm-56.6-164.2c27.3-32.4 24.8-61.9 24-72.5-24.1 1.4-52 16.4-67.9 34.9-17.5 19.8-27.8 44.3-25.6 71.9 26.1 2 49.9-11.4 69.5-34.3z" fill="currentColor"/></svg>
+  <span class="btn-stack"><span class="btn-small">Download on the</span><span class="btn-big">App Store</span></span>
+</a>
+        <a href="./how-it-works.html" class="hero-secondary">See how it works <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" class=""><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg></a>
+      </div>
+      <div class="hero-rating">
+        <span class="stars"><svg viewBox="0 0 24 24" width="16" height="16" aria-hidden="true"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2" fill="currentColor"/></svg><svg viewBox="0 0 24 24" width="16" height="16" aria-hidden="true"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2" fill="currentColor"/></svg><svg viewBox="0 0 24 24" width="16" height="16" aria-hidden="true"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2" fill="currentColor"/></svg><svg viewBox="0 0 24 24" width="16" height="16" aria-hidden="true"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2" fill="currentColor"/></svg><svg viewBox="0 0 24 24" width="16" height="16" aria-hidden="true"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2" fill="currentColor"/></svg></span>
+        <span>Loved by travelers in 40+ countries</span>
+      </div>
+    </div>
+    <div class="hero-art fade-up-delay">
+      <img src="./assets/compass-pin.svg" alt="Guidera compass pin" width="440" height="440" class="float"/>
+    </div>
+  </div>
+</section>
 
+<!-- Trust strip -->
+<section class="trust">
+  <div class="container"><p>Trusted by curious travelers · Featured on Product Hunt · 100,000+ stories told</p></div>
+</section>
+
+<!-- Features -->
 <section class="section">
-  <div class="section-header">
-    <h2>Explore at your own pace</h2>
-    <p>Walk anywhere. Learn everything. No strict itineraries required.</p>
+  <div class="container">
+    <div class="reveal section-head">
+      <h2>Explore at your own pace</h2>
+      <p>Walk anywhere. Learn everything. No strict itineraries required.</p>
+    </div>
+    <div class="feature-grid">
+      <div class="reveal" data-delay="0">
+  <div class="feature-card f-forest">
+    <div class="feature-icon"><svg viewBox="0 0 24 24" width="24" height="24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" class=""><polygon points="1 6 1 22 8 18 16 22 23 18 23 2 16 6 8 2 1 6"/><line x1="8" y1="2" x2="8" y2="18"/><line x1="16" y1="6" x2="16" y2="22"/></svg></div>
+    <h3>Tap to discover</h3>
+    <p>Select any building, park, or quiet street. Receive a rich, personalized narrative covering its history, architecture, and hidden details.</p>
   </div>
-
-  <div class="features-grid">
-
-    <div class="feature-card">
-      <div class="icon-wrap">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-          <path d="M20.5 9.5 19 21H5L3.5 9.5"/><path d="M2 9.5h20"/><path d="M12 3a4 4 0 0 1 4 4v2.5H8V7a4 4 0 0 1 4-4z"/>
-        </svg>
-      </div>
-      <h3>Tap to discover</h3>
-      <p>Select a building, park, or quiet street. Instantly receive a rich, personalized narrative covering its history, architecture, and hidden details.</p>
+</div>
+<div class="reveal" data-delay="80">
+  <div class="feature-card f-terra">
+    <div class="feature-icon"><svg viewBox="0 0 24 24" width="24" height="24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" class=""><path d="M3 18v-6a9 9 0 0 1 18 0v6"/><path d="M21 19a2 2 0 0 1-2 2h-1a2 2 0 0 1-2-2v-3a2 2 0 0 1 2-2h3zM3 19a2 2 0 0 0 2 2h1a2 2 0 0 0 2-2v-3a2 2 0 0 0-2-2H3z"/></svg></div>
+    <h3>Immersive audio</h3>
+    <p>Pocket your phone and just walk. Guidera narrates each stop automatically as you approach with a distraction-free player.</p>
+  </div>
+</div>
+<div class="reveal" data-delay="160">
+  <div class="feature-card f-forest">
+    <div class="feature-icon"><svg viewBox="0 0 24 24" width="24" height="24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" class=""><path d="M12 3v3M12 18v3M5 12H2M22 12h-3M5.5 5.5l2 2M16.5 16.5l2 2M5.5 18.5l2-2M16.5 7.5l2-2"/></svg></div>
+    <h3>Curated routes</h3>
+    <p>Follow hand-picked paths through the best of any city — or generate a custom AI tour. See the route, track progress, listen along.</p>
+  </div>
+</div>
+<div class="reveal" data-delay="240">
+  <div class="feature-card f-terra">
+    <div class="feature-icon"><svg viewBox="0 0 24 24" width="24" height="24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" class=""><path d="M21 11.5a8.38 8.38 0 0 1-.9 3.8 8.5 8.5 0 0 1-7.6 4.7 8.38 8.38 0 0 1-3.8-.9L3 21l1.9-5.7a8.38 8.38 0 0 1-.9-3.8 8.5 8.5 0 0 1 4.7-7.6 8.38 8.38 0 0 1 3.8-.9h.5a8.48 8.48 0 0 1 8 8v.5z"/></svg></div>
+    <h3>Ask follow-ups</h3>
+    <p>Curious about the architect, opening hours, or a historical event? Just ask. Turn every location into a conversation.</p>
+  </div>
+</div>
+<div class="reveal" data-delay="320">
+  <div class="feature-card f-forest">
+    <div class="feature-icon"><svg viewBox="0 0 24 24" width="24" height="24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" class=""><circle cx="12" cy="12" r="6"/><polyline points="12 10 12 12 13 13"/><path d="M16.13 7.66l-.81-4.05a2 2 0 0 0-2-1.61h-2.68a2 2 0 0 0-2 1.61l-.78 4.05M7.88 16.36l.8 4a2 2 0 0 0 2 1.61h2.72a2 2 0 0 0 2-1.61l.81-4.05"/></svg></div>
+    <h3>Watch &amp; Live Activity</h3>
+    <p>Track your journey from the Lock Screen, Dynamic Island, or Apple Watch. Get glanceable updates without opening the app.</p>
+  </div>
+</div>
+<div class="reveal" data-delay="400">
+  <div class="feature-card f-terra">
+    <div class="feature-icon"><svg viewBox="0 0 24 24" width="24" height="24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" class=""><circle cx="12" cy="12" r="10"/><line x1="2" y1="12" x2="22" y2="12"/><path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/></svg></div>
+    <h3>Global availability</h3>
+    <p>Works everywhere. Choose your guide persona, set your language, and dictate how deep you want the details to go.</p>
+  </div>
+</div>
     </div>
-
-    <div class="feature-card">
-      <div class="icon-wrap accent">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-          <circle cx="12" cy="12" r="10"/><polygon points="10 8 16 12 10 16 10 8"/>
-        </svg>
-      </div>
-      <h3>Immersive audio</h3>
-      <p>Pocket your phone and just walk. Guidera narrates each stop automatically as you approach with a beautiful, distraction-free player interface.</p>
-    </div>
-
-    <div class="feature-card">
-      <div class="icon-wrap">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-          <path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/>
-        </svg>
-      </div>
-      <h3>Curated routes</h3>
-      <p>Follow hand-picked paths through the best of any city, or generate a custom AI tour. See the route, track your progress, and listen along.</p>
-    </div>
-
-    <div class="feature-card">
-      <div class="icon-wrap accent">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-          <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/>
-        </svg>
-      </div>
-      <h3>Ask follow-ups</h3>
-      <p>Curious about the architect, opening hours, or a specific historical event? Just ask. Turn every location into an interactive conversation.</p>
-    </div>
-
-    <div class="feature-card">
-      <div class="icon-wrap">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-          <rect x="5" y="2" width="14" height="20" rx="3"/><circle cx="12" cy="18" r="1"/><path d="M9 6h6"/>
-        </svg>
-      </div>
-      <h3>Watch & Live Activity</h3>
-      <p>Track your journey right from the Lock Screen, Dynamic Island, or your Apple Watch. Get glanceable updates without ever opening the app.</p>
-    </div>
-
-    <div class="feature-card">
-      <div class="icon-wrap accent">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-          <circle cx="12" cy="12" r="9"/><path d="M12 3a15 15 0 0 1 0 18"/><path d="M12 3a15 15 0 0 0 0 18"/><path d="M3 12h18"/>
-        </svg>
-      </div>
-      <h3>Global availability</h3>
-      <p>Works everywhere. Choose your ideal guide persona, set your preferred language, and dictate how deep you want the details to go.</p>
-    </div>
-
   </div>
 </section>
 
-<section class="cta-strip">
-  <h2>Ready to step outside?</h2>
-  <p>Free to download. Discover the hidden stories right around the corner.</p>
-  <a class="app-store-btn" href="https://apps.apple.com/us/app/guidera-ai-city-guide/id6762008171" target="_blank" rel="noopener">
-    <svg viewBox="0 0 384 512" fill="currentColor" aria-hidden="true">
-      <path d="M318.7 268.7c-.2-36.7 16.4-64.4 50-84.8-18.8-26.9-47.2-41.7-84.7-44.6-35.5-2.8-74.3 20.7-88.5 20.7-15 0-49.4-19.7-76.4-19.7C63.3 141.2 4 184.8 4 273.5q0 39.3 14.4 81.2c12.8 36.7 59 126.7 107.2 125.2 25.2-.6 43-17.9 75.8-17.9 31.8 0 48.3 17.9 76.4 17.9 48.6-.7 90.4-82.5 102.6-119.3-65.2-30.7-61.7-90-61.7-91.9zm-56.6-164.2c27.3-32.4 24.8-61.9 24-72.5-24.1 1.4-52 16.4-67.9 34.9-17.5 19.8-27.8 44.3-25.6 71.9 26.1 2 49.9-11.4 69.5-34.3z"/>
-    </svg>
-    <span>
-      <span class="label-sm">Download on the</span>
-      <span class="label-lg">App Store</span>
-    </span>
-  </a>
+<!-- How it works -->
+<section class="section section-sand">
+  <div class="container">
+    <div class="reveal section-head">
+      <p class="eyebrow">How it works</p>
+      <h2 style="margin-top:12px">Three taps to a great walk</h2>
+    </div>
+    <div class="steps">
+      <div class="reveal" data-delay="0">
+  <div class="step">
+    <div class="step-img"><img src="./assets/phone-map.svg" alt="Open the map, anywhere" loading="lazy" width="240" height="360"/></div>
+    <p class="step-num">01</p>
+    <h3>Open the map, anywhere</h3>
+    <p>Wherever you are in the world, the map is already alive with stories nearby.</p>
+  </div>
+</div>
+<div class="reveal" data-delay="120">
+  <div class="step">
+    <div class="step-img"><img src="./assets/phone-audio.svg" alt="Tap &amp; listen" loading="lazy" width="240" height="360"/></div>
+    <p class="step-num">02</p>
+    <h3>Tap &amp; listen</h3>
+    <p>Pick a place. Press play. Pocket your phone and start walking — Guidera narrates as you go.</p>
+  </div>
+</div>
+<div class="reveal" data-delay="240">
+  <div class="step">
+    <div class="step-img"><img src="./assets/phone-chat.svg" alt="Ask anything" loading="lazy" width="240" height="360"/></div>
+    <p class="step-num">03</p>
+    <h3>Ask anything</h3>
+    <p>Curious? Type or speak a follow-up question and get a thoughtful, conversational answer.</p>
+  </div>
+</div>
+    </div>
+  </div>
 </section>
 
-<footer>
-  <div class="footer-links">
-    <a href="https://msc35.github.io/guidera-legal/privacy">Privacy Policy</a>
-    <a href="https://msc35.github.io/guidera-legal/terms">Terms of Service</a>
-    <a href="mailto:mehmetselim692@icloud.com">Support</a>
+<!-- Cities rail -->
+<section style="overflow:hidden;padding:96px 0">
+  <div class="cities-head reveal">
+    <div>
+      <p class="eyebrow">Works everywhere</p>
+      <h2>From Paris to Kyoto, all in your pocket.</h2>
+    </div>
+    <a href="./cities.html" class="story-link" style="font-size:14px;font-weight:500">See all cities →</a>
   </div>
-  <div class="footer-copy">
-    © 2026 Mehmet Selim Çetin · Guidera is not affiliated with Google, OpenAI, or Apple Inc.
+  <div class="cities-rail">
+    <span class="city-chip">Paris</span>
+<span class="city-chip">Rome</span>
+<span class="city-chip">Tokyo</span>
+<span class="city-chip">New York</span>
+<span class="city-chip">Istanbul</span>
+<span class="city-chip">Barcelona</span>
+<span class="city-chip">London</span>
+<span class="city-chip">Lisbon</span>
+<span class="city-chip">Kyoto</span>
+<span class="city-chip">Marrakech</span>
+<span class="city-chip">Vienna</span>
+<span class="city-chip">Buenos Aires</span>
+  </div>
+</section>
+
+<!-- Testimonials -->
+<section class="section section-forest">
+  <div class="container">
+    <div class="reveal section-head">
+      <h2>Quietly loved.</h2>
+      <p>Travelers who'd rather wander than be herded.</p>
+    </div>
+    <div class="testimonials">
+      <div class="reveal" data-delay="0">
+  <figure class="testimonial">
+    <svg viewBox="0 0 24 24" width="28" height="28" aria-hidden="true" class="quote-icon"><path d="M3 21c3 0 7-1 7-8V5c0-1.25-.756-2.017-2-2H4c-1.25 0-2 .75-2 1.972V11c0 1.25.75 2 2 2 1 0 1 0 1 1v1c0 1-1 2-2 2s-1 .008-1 1.031V20c0 1 0 1 1 1zm12 0c3 0 7-1 7-8V5c0-1.25-.757-2.017-2-2h-4c-1.25 0-2 .75-2 1.972V11c0 1.25.75 2 2 2 .75 0 1 0 1 1v1c0 1-1 2-2 2s-1 .008-1 1.031V20c0 1 0 1 1 1z" fill="currentColor"/></svg>
+    <blockquote>"Like having a wildly well-read friend whisper in your ear as you walk. I cancelled a paid tour because of this."</blockquote>
+    <figcaption>
+      <span class="avatar">L</span>
+      <span><span class="name">Léa M.</span><span class="meta">Paris</span></span>
+    </figcaption>
+  </figure>
+</div>
+<div class="reveal" data-delay="100">
+  <figure class="testimonial">
+    <svg viewBox="0 0 24 24" width="28" height="28" aria-hidden="true" class="quote-icon"><path d="M3 21c3 0 7-1 7-8V5c0-1.25-.756-2.017-2-2H4c-1.25 0-2 .75-2 1.972V11c0 1.25.75 2 2 2 1 0 1 0 1 1v1c0 1-1 2-2 2s-1 .008-1 1.031V20c0 1 0 1 1 1zm12 0c3 0 7-1 7-8V5c0-1.25-.757-2.017-2-2h-4c-1.25 0-2 .75-2 1.972V11c0 1.25.75 2 2 2 .75 0 1 0 1 1v1c0 1-1 2-2 2s-1 .008-1 1.031V20c0 1 0 1 1 1z" fill="currentColor"/></svg>
+    <blockquote>"I wandered Rome for four hours and couldn&#x27;t put it down. The depth of detail on tiny side streets is unreal."</blockquote>
+    <figcaption>
+      <span class="avatar">D</span>
+      <span><span class="name">David K.</span><span class="meta">Rome</span></span>
+    </figcaption>
+  </figure>
+</div>
+<div class="reveal" data-delay="200">
+  <figure class="testimonial">
+    <svg viewBox="0 0 24 24" width="28" height="28" aria-hidden="true" class="quote-icon"><path d="M3 21c3 0 7-1 7-8V5c0-1.25-.756-2.017-2-2H4c-1.25 0-2 .75-2 1.972V11c0 1.25.75 2 2 2 1 0 1 0 1 1v1c0 1-1 2-2 2s-1 .008-1 1.031V20c0 1 0 1 1 1zm12 0c3 0 7-1 7-8V5c0-1.25-.757-2.017-2-2h-4c-1.25 0-2 .75-2 1.972V11c0 1.25.75 2 2 2 .75 0 1 0 1 1v1c0 1-1 2-2 2s-1 .008-1 1.031V20c0 1 0 1 1 1z" fill="currentColor"/></svg>
+    <blockquote>"Finally, a travel app that respects your attention. No popups, no points — just stories. Quietly brilliant."</blockquote>
+    <figcaption>
+      <span class="avatar">A</span>
+      <span><span class="name">Aiko T.</span><span class="meta">Kyoto</span></span>
+    </figcaption>
+  </figure>
+</div>
+    </div>
+  </div>
+</section>
+
+<!-- FAQ teaser -->
+<section class="section" style="max-width:768px;margin:0 auto">
+  <div class="container-sm">
+    <div class="reveal section-head"><h2>Questions?</h2></div>
+    <div class="faq-list"><div class="reveal" data-delay="0">
+  <details><summary>Is Guidera free?<span class="plus">+</span></summary><p>Yes — free to download with generous free use. A subscription unlocks unlimited tours and longer-form narratives.</p></details>
+</div>
+<div class="reveal" data-delay="60">
+  <details><summary>Does it work offline?<span class="plus">+</span></summary><p>Tours and saved places work offline once downloaded. New AI narrations require a connection.</p></details>
+</div>
+<div class="reveal" data-delay="120">
+  <details><summary>Which languages are supported?<span class="plus">+</span></summary><p>Over 30 languages, with native-sounding voices in each.</p></details>
+</div>
+<div class="reveal" data-delay="180">
+  <details><summary>Is my location data private?<span class="plus">+</span></summary><p>Location is processed on-device for nearby suggestions. We never sell or share your data.</p></details>
+</div></div>
+    <p class="faq-cta"><a href="./faq.html" class="story-link">Read all FAQs →</a></p>
+  </div>
+</section>
+
+<!-- Final CTA -->
+<section class="cta-strip section-sand-solid">
+  <div class="container-sm reveal">
+    <h2>Ready to step outside?</h2>
+    <p>Free to download. Discover the hidden stories right around the corner.</p>
+    <div class="cta-buttons"><a href="https://apps.apple.com/us/app/guidera-ai-city-guide/id6762008171" target="_blank" rel="noopener noreferrer" class="btn-app btn-terra ">
+  <svg viewBox="0 0 384 512" width="28" height="28" aria-hidden="true"><path d="M318.7 268.7c-.2-36.7 16.4-64.4 50-84.8-18.8-26.9-47.2-41.7-84.7-44.6-35.5-2.8-74.3 20.7-88.5 20.7-15 0-49.4-19.7-76.4-19.7C63.3 141.2 4 184.8 4 273.5q0 39.3 14.4 81.2c12.8 36.7 59 126.7 107.2 125.2 25.2-.6 43-17.9 75.8-17.9 31.8 0 48.3 17.9 76.4 17.9 48.6-.7 90.4-82.5 102.6-119.3-65.2-30.7-61.7-90-61.7-91.9zm-56.6-164.2c27.3-32.4 24.8-61.9 24-72.5-24.1 1.4-52 16.4-67.9 34.9-17.5 19.8-27.8 44.3-25.6 71.9 26.1 2 49.9-11.4 69.5-34.3z" fill="currentColor"/></svg>
+  <span class="btn-stack"><span class="btn-small">Download on the</span><span class="btn-big">App Store</span></span>
+</a></div>
+  </div>
+</section>
+</main>
+<footer class="footer">
+  <div class="footer-inner">
+    <div class="footer-grid">
+      <div>
+        <div class="logo">
+          <span class="logo-mark">G</span>
+          <span class="logo-text">Guidera</span>
+        </div>
+        <p class="footer-tagline">A warmer, calmer travel companion. Tap any place on the map and let AI tell its story.</p>
+      </div>
+      <div>
+        <h4>Product</h4>
+        <ul>
+          <li><a href="./features.html" class="story-link">Features</a></li>
+          <li><a href="./how-it-works.html" class="story-link">How it works</a></li>
+          <li><a href="./cities.html" class="story-link">Cities</a></li>
+          <li><a href="./faq.html" class="story-link">FAQ</a></li>
+        </ul>
+      </div>
+      <div>
+        <h4>Company</h4>
+        <ul>
+          <li><a href="./about.html" class="story-link">About</a></li>
+          <li><a href="https://msc35.github.io/guidera-legal/privacy" class="story-link">Privacy</a></li>
+          <li><a href="https://msc35.github.io/guidera-legal/terms" class="story-link">Terms</a></li>
+          <li><a href="mailto:mehmetselim692@icloud.com" class="story-link">Support</a></li>
+        </ul>
+      </div>
+    </div>
+    <div class="footer-bottom">
+      <p>© <span id="year">2026</span> Mehmet Selim Çetin · Guidera is not affiliated with Google, OpenAI, or Apple Inc.</p>
+      <p>Made with care in Stockholm.</p>
+    </div>
   </div>
 </footer>
-
-<script>
-  // Smooth, staggered fade-in animations for feature cards
-  const observerOptions = {
-    threshold: 0.1,
-    rootMargin: '0px 0px -50px 0px'
-  };
-
-  const observer = new IntersectionObserver((entries) => {
-    entries.forEach((entry) => {
-      if (entry.isIntersecting) {
-        // Calculate delay based on element's index to stagger the reveal
-        const delay = entry.target.dataset.delay || '0ms';
-        entry.target.style.transitionDelay = delay;
-        entry.target.classList.add('in');
-        observer.unobserve(entry.target);
-      }
-    });
-  }, observerOptions);
-
-  document.querySelectorAll('.feature-card').forEach((el, index) => {
-    // 100ms stagger between cards
-    el.dataset.delay = `${index * 100}ms`;
-    observer.observe(el);
-  });
-</script>
-
+<script src="./main.js" defer></script>
 </body>
 </html>
